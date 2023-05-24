@@ -3,11 +3,11 @@ const vinValidator = require("vin-validator");
 
 const checkCarId = async (req, res, next) => {
   try {
-    const isExistCar = await carsModel.getById(req.params.id);
-    if (!isExistCar) {
+    const isExist = await carsModel.getById(req.params.id);
+    if (!isExist) {
       res.status(404).json({ message: "car is not found" });
     } else {
-      req.currentCar = isExistCar; // car'ın bulunması halinde veri tabanından tekrardan veri çekmek yerine veriyi kaydetmek için currentCar adlı key'e value olarak atıyoruz.
+      req.currentCar = isExist; // car'ın bulunması halinde veri tabanından tekrardan veri çekmek yerine veriyi kaydetmek için currentCar adlı key'e value olarak atıyoruz.
       next();
     }
   } catch (error) {
@@ -17,11 +17,10 @@ const checkCarId = async (req, res, next) => {
 
 const checkCarPayload = (req, res, next) => {
   try {
-    const willCheckFields = ["vin", "make", "model", "mileage", "transmission"];
+    const allFields = ["vin", "make", "model", "mileage", "transmission"];
     let missedFields = [];
-
-    for (let i = 0; i < willCheckFields.length; i++) {
-      const item = willCheckFields[i];
+    for (let i = 0; i < allFields.length; i++) {
+      const item = allFields[i];
       if (!req.body[item]) {
         missedFields.push(item);
       }
@@ -55,8 +54,8 @@ const checkVinNumberValid = (req, res, next) => {
 
 const checkVinNumberUnique = async (req, res, next) => {
   try {
-    let isExistCar = await carsModel.getByVin(req.body.vin);
-    if (!isExistCar) {
+    let isExist = await carsModel.getByVin(req.body.vin);
+    if (isExist) {
       res.status(400).json({ message: `vin ${req.body.vin} already exists` });
     } else {
       next();
@@ -65,10 +64,9 @@ const checkVinNumberUnique = async (req, res, next) => {
     next(error);
   }
 };
-
 module.exports = {
   checkCarId,
   checkCarPayload,
-  checkVinNumberValid,
   checkVinNumberUnique,
+  checkVinNumberValid,
 };

@@ -27,7 +27,7 @@ router.post(
   carMw.checkVinNumberUnique,
   async (req, res, next) => {
     try {
-      let car = {
+      let model = {
         vin: req.body.vin,
         make: req.body.make,
         model: req.body.model,
@@ -35,7 +35,7 @@ router.post(
         transmission: req.body.transmission,
         title: req.body.title,
       };
-      const insertedCar = await carsModel.create(car);
+      const insertedCar = await carsModel.create(model);
       res.status(201).json(insertedCar);
     } catch (error) {
       next(error);
